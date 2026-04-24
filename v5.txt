@@ -3,252 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ABC Store</title>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-
-<style>
-body{margin:0;font-family:'DM Sans',sans-serif;background:#f6f6f6}
-
-/* TOP BAR */
-.topbar{
-background:#111;color:#fff;font-size:13px;padding:6px;
-white-space:nowrap;overflow:hidden;text-align:center
-}
-.topbar span{display:inline-block;animation:scroll 15s linear infinite}
-@keyframes scroll{
-0%{transform:translateX(100%)}
-100%{transform:translateX(-100%)}
-}
-
-/* HEADER */
-.header{
-background:#ff7a00;display:flex;align-items:center;
-padding:15px 30px;gap:20px;position:sticky;top:0;z-index:1000
-}
-.logo{color:#fff;font-weight:700;font-size:22px}
-.search{flex:1}
-.search input{
-width:100%;padding:12px 20px;border-radius:40px;border:none
-}
-.icons{color:#fff;display:flex;gap:20px;cursor:pointer}
-
-/* NAV */
-.nav{
-background:#fff;padding:12px 30px;
-display:flex;gap:25px;border-bottom:1px solid #ddd
-}
-
-/* LAYOUT */
-.container{
-display:grid;grid-template-columns:260px 1fr;
-gap:20px;padding:20px
-}
-
-/* SIDEBAR */
-.sidebar{
-background:#fff;padding:15px;border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,0.05)
-}
-.sidebar div{
-padding:10px;border-radius:6px;cursor:pointer;
-transition:.2s
-}
-.sidebar div:hover{background:#f2f2f2}
-
-/* HERO SLIDER */
-.hero{position:relative;height:320px;border-radius:12px;overflow:hidden}
-.slide{
-position:absolute;width:100%;height:100%;
-opacity:0;transition:.6s
-}
-.slide.active{opacity:1}
-.slide img{width:100%;height:100%;object-fit:cover}
-
-.dots{
-position:absolute;bottom:10px;left:50%;
-transform:translateX(-50%);
-display:flex;gap:6px
-}
-.dot{
-width:10px;height:10px;background:#fff;
-border-radius:50%;opacity:.5;cursor:pointer
-}
-.dot.active{opacity:1}
-
-/* PRODUCTS */
-.products{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;margin-top:30px
-}
-.card{
-background:#fff;padding:15px;border-radius:10px;
-transition:.3s
-}
-.card:hover{
-transform:translateY(-6px);
-box-shadow:0 10px 20px rgba(0,0,0,0.1)
-}
-.card img{width:100%;height:200px;object-fit:cover}
-.btn{
-background:#0a6cdc;color:#fff;padding:10px;
-border:none;margin-top:10px;cursor:pointer;border-radius:5px
-}
-
-/* CART */
-.cart{
-position:fixed;right:-350px;top:0;
-width:300px;height:100%;background:#fff;
-box-shadow:-2px 0 10px rgba(0,0,0,0.1);
-padding:20px;transition:.3s;z-index:2000
-}
-.cart.open{right:0}
-
-/* MOBILE */
-@media(max-width:768px){
-.container{grid-template-columns:1fr}
-.sidebar{display:none}
-}
-</style>
-</head>
-
-<body>
-
-<div class="topbar">
-<span>🔥 Fast Delivery | Best Prices | Trusted Store 🔥</span>
-</div>
-
-<div class="header">
-<div class="logo">ABC Store</div>
-
-<div class="search">
-<input placeholder="Search products">
-</div>
-
-<div class="icons" onclick="toggleCart()">🛒 (<span id="count">0</span>)</div>
-</div>
-
-<div class="nav">
-Home Hot Deals Solar UPS Track Order
-</div>
-
-<div class="container">
-
-<div class="sidebar">
-<h3>Categories</h3>
-<div>Solar</div>
-<div>Inverters</div>
-<div>Batteries</div>
-</div>
-
-<div>
-
-<!-- SLIDER -->
-<div class="hero">
-<div class="slide active"><img src="https://via.placeholder.com/800x400"></div>
-<div class="slide"><img src="https://via.placeholder.com/800x400/ff7a00"></div>
-<div class="slide"><img src="https://via.placeholder.com/800x400/333"></div>
-
-<div class="dots"></div>
-</div>
-
-<div class="products" id="products"></div>
-
-</div>
-
-</div>
-
-<!-- CART -->
-<div class="cart" id="cart">
-<h3>Cart</h3>
-<div id="cart-items"></div>
-<p>Total: Rs. <span id="total">0</span></p>
-</div>
-
-<script>
-const products=[
-{id:1,name:"Product 1",price:1000,img:"https://via.placeholder.com/300"},
-{id:2,name:"Product 2",price:1500,img:"https://via.placeholder.com/300"},
-{id:3,name:"Product 3",price:2000,img:"https://via.placeholder.com/300"},
-{id:4,name:"Product 4",price:2500,img:"https://via.placeholder.com/300"}
-];
-
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
-
-// render products
-document.getElementById("products").innerHTML=
-products.map(p=>`
-<div class="card">
-<img src="${p.img}">
-<h4>${p.name}</h4>
-<p>Rs. ${p.price}</p>
-<button class="btn" onclick="addToCart(${p.id})">Add</button>
-</div>
-`).join("");
-
-// cart logic
-function addToCart(id){
-let item=cart.find(p=>p.id===id);
-if(item){item.qty++}
-else{
-let p=products.find(p=>p.id===id);
-cart.push({...p,qty:1});
-}
-updateCart();
-}
-
-function updateCart(){
-localStorage.setItem("cart",JSON.stringify(cart));
-document.getElementById("count").innerText=
-cart.reduce((a,b)=>a+b.qty,0);
-
-document.getElementById("cart-items").innerHTML=
-cart.map(i=>`<p>${i.name} x${i.qty}</p>`).join("");
-
-document.getElementById("total").innerText=
-cart.reduce((a,b)=>a+(b.price*b.qty),0);
-}
-
-function toggleCart(){
-document.getElementById("cart").classList.toggle("open");
-}
-
-// slider
-let slides=document.querySelectorAll(".slide");
-let dotsContainer=document.querySelector(".dots");
-let index=0;
-
-slides.forEach((_,i)=>{
-let d=document.createElement("div");
-d.className="dot";
-d.onclick=()=>showSlide(i);
-dotsContainer.appendChild(d);
-});
-
-function showSlide(i){
-slides.forEach(s=>s.classList.remove("active"));
-dotsContainer.children[index].classList.remove("active");
-
-index=i;
-slides[index].classList.add("active");
-dotsContainer.children[index].classList.add("active");
-}
-
-setInterval(()=>{
-showSlide((index+1)%slides.length);
-},3000);
-
-updateCart();
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ABC Store | Premium Ecommerce</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -258,19 +12,21 @@ updateCart();
   --dark:#111111;
   --text:#1f2937;
   --muted:#6b7280;
-  --bg:#f5f7fb;
+  --bg:#f4f6fb;
   --white:#ffffff;
   --border:#e5e7eb;
   --shadow:0 14px 30px rgba(17, 24, 39, 0.08);
 }
 
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{margin:0;padding:0;scroll-behavior:smooth}
 body{
   font-family:'DM Sans',sans-serif;
   color:var(--text);
-  background:var(--bg);
-  line-height:1.4;
+  background:
+    radial-gradient(circle at 25px 25px, rgba(255,122,0,.05) 2px, transparent 0) 0 0/50px 50px,
+    var(--bg);
+  line-height:1.45;
 }
 
 a{color:inherit;text-decoration:none}
@@ -315,13 +71,11 @@ button,input{font-family:inherit}
   align-items:center;
 }
 .logo{
-  font-size:1.5rem;
+  font-size:1.6rem;
   font-weight:800;
   letter-spacing:.3px;
 }
-.search{
-  position:relative;
-}
+.search{position:relative}
 .search input{
   width:100%;
   border:none;
@@ -340,27 +94,27 @@ button,input{font-family:inherit}
   color:#555;
   pointer-events:none;
 }
-.header-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
+.header-actions{display:flex;gap:10px;align-items:center}
 .icon-btn{
   border:1px solid rgba(255,255,255,.45);
   color:var(--white);
   background:rgba(255,255,255,.14);
   border-radius:999px;
-  height:42px;
-  min-width:42px;
+  min-height:44px;
+  min-width:44px;
   padding:0 14px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:6px;
   cursor:pointer;
-  transition:.25s ease;
+  transition:transform .2s ease, background .25s ease, box-shadow .25s ease;
 }
-.icon-btn:hover{background:rgba(255,255,255,.25)}
+.icon-btn:hover{
+  background:rgba(255,255,255,.25);
+  transform:translateY(-1px);
+  box-shadow:0 0 0 3px rgba(255,255,255,.2);
+}
 .cart-count{
   display:inline-flex;
   align-items:center;
@@ -391,21 +145,21 @@ button,input{font-family:inherit}
 .nav a{
   display:block;
   padding:14px 14px;
-  font-weight:600;
+  font-weight:700;
   color:#374151;
   border-radius:8px;
-  transition:.25s ease;
+  transition:transform .2s ease, background .25s ease, color .25s ease;
 }
-.nav a:hover{background:#fff2e6;color:var(--orange)}
+.nav a:hover{background:#fff2e6;color:var(--orange);transform:translateY(-1px)}
 
 /* ---------- MAIN LAYOUT ---------- */
 .page{
   max-width:1280px;
-  margin:20px auto 40px;
-  padding:0 16px;
+  margin:24px auto 44px;
+  padding:0 18px;
   display:grid;
   grid-template-columns:260px 1fr;
-  gap:20px;
+  gap:22px;
 }
 .sidebar,
 .surface{
@@ -414,15 +168,26 @@ button,input{font-family:inherit}
   box-shadow:var(--shadow);
 }
 
+/* ---------- SCROLL ANIMATION ---------- */
+.reveal{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.reveal.is-visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
 /* ---------- SIDEBAR ---------- */
-.sidebar{padding:16px 14px;height:fit-content}
-.sidebar h3{margin:4px 10px 14px;font-size:1.06rem}
+.sidebar{padding:18px 15px;height:fit-content}
+.sidebar h3{margin:6px 10px 14px;font-size:1.08rem}
 .category-list{display:grid;gap:8px}
 .category-item{
-  padding:10px 12px;
+  padding:11px 13px;
   border-radius:10px;
   cursor:pointer;
-  transition:.2s ease;
+  transition:transform .2s ease, background .2s ease, color .2s ease;
   font-weight:500;
 }
 .category-item:hover{
@@ -451,7 +216,9 @@ button,input{font-family:inherit}
 .slide-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(0,0,0,.66), rgba(0,0,0,.2));
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.72), rgba(0,0,0,.28)),
+    radial-gradient(circle at top right, rgba(255,122,0,.4), transparent 45%);
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -459,21 +226,26 @@ button,input{font-family:inherit}
   padding:36px;
   color:var(--white);
 }
-.slide-overlay h2{margin:0;font-size:clamp(1.35rem,4vw,2.25rem)}
-.slide-overlay p{margin:0;max-width:470px;color:#e5e7eb}
+.slide-overlay h1,
+.slide-overlay h2{margin:0;font-size:clamp(1.4rem,4vw,2.3rem);line-height:1.15}
+.slide-overlay p{margin:0;max-width:500px;color:#e5e7eb;font-size:1rem}
 .cta{
   align-self:flex-start;
   margin-top:8px;
   border:none;
   background:var(--orange);
   color:#fff;
-  padding:11px 18px;
-  border-radius:9px;
+  padding:12px 20px;
+  border-radius:10px;
   font-weight:700;
   cursor:pointer;
-  transition:.25s;
+  transition:transform .2s ease, box-shadow .25s ease, background .25s ease;
 }
-.cta:hover{background:var(--orange-dark);transform:translateY(-1px)}
+.cta:hover{
+  background:var(--orange-dark);
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(255,122,0,.35);
+}
 .slider-controls{
   position:absolute;
   inset-inline:0;
@@ -486,8 +258,8 @@ button,input{font-family:inherit}
 }
 .ctrl{
   pointer-events:auto;
-  width:38px;
-  height:38px;
+  width:40px;
+  height:40px;
   border:none;
   border-radius:50%;
   background:rgba(255,255,255,.85);
@@ -513,7 +285,7 @@ button,input{font-family:inherit}
 
 /* ---------- MULTI-BANNER ---------- */
 .multi-banner{
-  margin-top:20px;
+  margin-top:22px;
   display:grid;
   gap:16px;
   grid-template-columns:2fr 1.35fr;
@@ -527,7 +299,9 @@ button,input{font-family:inherit}
   box-shadow:var(--shadow);
 }
 .banner-large img,
-.banner-small img{width:100%;height:100%;object-fit:cover;display:block}
+.banner-small img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+.banner-large:hover img,
+.banner-small:hover img{transform:scale(1.06)}
 .banner-caption{
   position:absolute;
   inset:auto 0 0 0;
@@ -540,14 +314,14 @@ button,input{font-family:inherit}
 
 /* ---------- PRODUCTS ---------- */
 .section-header{
-  margin:28px 0 14px;
+  margin:34px 0 16px;
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:space-between;
   gap:14px;
 }
-.section-header h3{margin:0;font-size:1.35rem}
-.section-header p{margin:0;color:var(--muted)}
+.section-header h3{margin:0;font-size:1.55rem;line-height:1.2}
+.section-header p{margin:0;color:var(--muted);font-size:1rem}
 .products{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -558,26 +332,79 @@ button,input{font-family:inherit}
   border:1px solid var(--border);
   border-radius:14px;
   overflow:hidden;
-  transition:transform .25s, box-shadow .25s;
+  opacity:0;
+  transform:translateY(12px);
+  transition:transform .25s ease, box-shadow .25s ease, opacity .3s ease;
 }
+.card.loaded{opacity:1;transform:translateY(0)}
 .card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
-.card img{width:100%;height:210px;object-fit:cover;display:block}
+.card-media{overflow:hidden}
+.card img{width:100%;height:210px;object-fit:cover;display:block;transition:transform .5s ease}
+.card:hover img{transform:scale(1.06)}
 .card-body{padding:14px}
-.card h4{margin:0 0 8px;font-size:1.02rem}
+.card h4{margin:0 0 8px;font-size:1.03rem;line-height:1.35}
 .price{font-weight:800;color:#0f172a}
 .btn{
   width:100%;
+  min-height:44px;
   margin-top:12px;
   border:none;
   border-radius:10px;
-  padding:10px 12px;
+  padding:11px 12px;
   background:var(--orange);
   color:#fff;
   font-weight:700;
   cursor:pointer;
-  transition:.2s;
+  transition:transform .2s ease, box-shadow .25s ease, background .2s ease;
 }
-.btn:hover{background:var(--orange-dark)}
+.btn:hover{
+  background:var(--orange-dark);
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px rgba(255,122,0,.35);
+}
+.btn[disabled]{opacity:.9;cursor:wait}
+
+/* ---------- SKELETON ---------- */
+.skeleton{
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#fff;
+  overflow:hidden;
+}
+.skeleton .line,
+.skeleton .media,
+.skeleton .btn-sk{
+  background:linear-gradient(90deg, #edf0f5 25%, #f7f9fc 50%, #edf0f5 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.1s infinite linear;
+}
+.skeleton .media{height:210px}
+.skeleton .inner{padding:14px}
+.skeleton .line{height:12px;border-radius:6px;margin-bottom:10px}
+.skeleton .line.short{width:55%}
+.skeleton .btn-sk{height:42px;border-radius:10px;margin-top:14px}
+@keyframes shimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
+/* ---------- TOAST ---------- */
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  transform:translate(-50%, 20px);
+  background:#111827;
+  color:#fff;
+  padding:11px 16px;
+  border-radius:10px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease;
+  z-index:5000;
+  box-shadow:0 10px 26px rgba(0,0,0,.25);
+}
+.toast.show{opacity:1;transform:translate(-50%, 0)}
 
 /* ---------- CART SIDEBAR ---------- */
 .backdrop{
@@ -623,14 +450,15 @@ button,input{font-family:inherit}
 }
 .cart-item img{width:64px;height:64px;border-radius:8px;object-fit:cover}
 .cart-item h5{margin:0 0 4px;font-size:14px}
-.qty-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.qty-row{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
 .qty-btn,
 .remove-btn{
   border:1px solid var(--border);
   background:#fff;
-  border-radius:7px;
+  border-radius:8px;
   cursor:pointer;
-  padding:4px 8px;
+  min-height:36px;
+  padding:6px 10px;
 }
 .remove-btn{color:#b91c1c}
 .cart-foot{
@@ -643,13 +471,22 @@ button,input{font-family:inherit}
 .checkout{
   border:none;
   border-radius:10px;
-  padding:11px;
+  padding:12px;
+  min-height:44px;
   background:var(--orange);
   color:#fff;
   font-weight:700;
   cursor:pointer;
 }
-.empty{color:var(--muted);text-align:center;padding:30px 12px}
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:32px 12px;
+  border:1px dashed var(--border);
+  border-radius:12px;
+  background:#fafafa;
+}
+.empty .icon{font-size:28px;display:block;margin-bottom:8px}
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width:1024px){
@@ -659,13 +496,15 @@ button,input{font-family:inherit}
 }
 @media (max-width:768px){
   .header{grid-template-columns:1fr;gap:10px;padding:12px}
-  .header-actions{justify-content:flex-end}
+  .logo{font-size:1.4rem}
+  .header-actions{justify-content:space-between;gap:8px}
+  .icon-btn{flex:1}
   .hero{min-height:300px}
   .slide-overlay{padding:20px}
   .banner-grid{grid-template-columns:1fr}
   .nav{padding:0 10px}
   .nav ul{gap:2px}
-  .nav a{padding:11px 10px;font-size:14px}
+  .nav a{padding:12px 10px;font-size:14px}
 }
 </style>
 </head>
@@ -704,20 +543,20 @@ button,input{font-family:inherit}
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Shop</a></li>
-      <li><a href="#">Hot Deals</a></li>
-      <li><a href="#">Solar Solutions</a></li>
-      <li><a href="#">UPS & Inverters</a></li>
-      <li><a href="#">Track Order</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="#top">Home</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#deals">Deals</a></li>
+      <li><a href="#shop">Solar Solutions</a></li>
+      <li><a href="#shop">UPS & Inverters</a></li>
+      <li><a href="#top">Track Order</a></li>
+      <li><a href="#top">Contact</a></li>
     </ul>
   </nav>
 </div>
 
-<main class="page">
+<main class="page" id="top">
   <!-- Left Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar reveal">
     <h3>Shop by Categories</h3>
     <div class="category-list">
       <div class="category-item">Solar Panels</div>
@@ -732,17 +571,17 @@ button,input{font-family:inherit}
 
   <section>
     <!-- Hero Slider -->
-    <div class="hero" id="heroSlider">
+    <div class="hero reveal" id="heroSlider">
       <article class="slide active">
-        <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1400&q=80" alt="Premium solar solutions">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1400&q=80" alt="Premium solar solutions">
         <div class="slide-overlay">
-          <h2>Power Your Home with Premium Solar Kits</h2>
+          <h1>Power Your Home with Premium Solar Kits</h1>
           <p>Build a smarter, cleaner home energy setup with top-tier brands and trusted installation partners.</p>
           <button class="cta">Shop Solar Deals</button>
         </div>
       </article>
       <article class="slide">
-        <img src="https://images.unsplash.com/photo-1577375729152-4c8b5fcda381?auto=format&fit=crop&w=1400&q=80" alt="Advanced inverter systems">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1577375729152-4c8b5fcda381?auto=format&fit=crop&w=1400&q=80" alt="Advanced inverter systems">
         <div class="slide-overlay">
           <h2>Heavy-Duty Inverters for Uninterrupted Power</h2>
           <p>From apartments to industrial spaces, discover inverter systems engineered for real-world reliability.</p>
@@ -750,7 +589,7 @@ button,input{font-family:inherit}
         </div>
       </article>
       <article class="slide">
-        <img src="https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=1400&q=80" alt="Battery storage products">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=1400&q=80" alt="Battery storage products">
         <div class="slide-overlay">
           <h2>Long-Life Battery Storage Collection</h2>
           <p>Get optimized backup with fast-charging batteries designed for daily performance and long warranty cycles.</p>
@@ -765,39 +604,39 @@ button,input{font-family:inherit}
       <div class="dots" id="dots"></div>
     </div>
 
-    <!-- Multi-banner section -->
-    <section class="multi-banner" aria-label="Promotional banners">
+    <!-- Deals banner section -->
+    <section class="multi-banner reveal" aria-label="Promotional banners" id="deals">
       <article class="banner-large">
-        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="Mega sale banner">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="Mega sale banner">
         <div class="banner-caption">Mega Weekend Sale • Up to 30% OFF</div>
       </article>
 
       <div class="banner-grid">
         <article class="banner-small">
-          <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=800&q=80" alt="Smart battery deals">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=800&q=80" alt="Smart battery deals">
           <div class="banner-caption">Smart Batteries</div>
         </article>
         <article class="banner-small">
-          <img src="https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?auto=format&fit=crop&w=800&q=80" alt="Inverter discounts">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?auto=format&fit=crop&w=800&q=80" alt="Inverter discounts">
           <div class="banner-caption">Inverter Discounts</div>
         </article>
         <article class="banner-small">
-          <img src="https://images.unsplash.com/photo-1581093588401-16ecf2c03f7f?auto=format&fit=crop&w=800&q=80" alt="Portable power">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1581093588401-16ecf2c03f7f?auto=format&fit=crop&w=800&q=80" alt="Portable power">
           <div class="banner-caption">Portable Power</div>
         </article>
         <article class="banner-small">
-          <img src="https://images.unsplash.com/photo-1625766763788-54d58f8e4740?auto=format&fit=crop&w=800&q=80" alt="Home energy kits">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1625766763788-54d58f8e4740?auto=format&fit=crop&w=800&q=80" alt="Home energy kits">
           <div class="banner-caption">Home Energy Kits</div>
         </article>
       </div>
     </section>
 
     <!-- Product Section -->
-    <div class="section-header">
+    <div class="section-header reveal" id="shop">
       <h3>Featured Products</h3>
       <p>Carefully selected best sellers</p>
     </div>
-    <div class="products" id="products"></div>
+    <div class="products reveal" id="products"></div>
   </section>
 </main>
 
@@ -820,6 +659,8 @@ button,input{font-family:inherit}
   </div>
 </aside>
 
+<div class="toast" id="toast">Added to cart</div>
+
 <script>
 /* ---------- Product Data ---------- */
 const products = [
@@ -834,23 +675,62 @@ const products = [
 ];
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let toastTimeout;
 
-/* ---------- Product Rendering ---------- */
+/* ---------- Utilities ---------- */
 function formatPrice(value){
   return value.toLocaleString("en-PK");
 }
 
-function renderProducts(){
-  document.getElementById("products").innerHTML = products.map(product => `
-    <article class="card">
-      <img src="${product.img}" alt="${product.name}">
-      <div class="card-body">
-        <h4>${product.name}</h4>
-        <div class="price">Rs. ${formatPrice(product.price)}</div>
-        <button class="btn" type="button" onclick="addToCart(${product.id})">Add to Cart</button>
+function showToast(message = "Added to cart"){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
+
+/* ---------- Product Rendering + Skeleton Loading ---------- */
+function renderProductSkeletons(){
+  const holder = document.getElementById("products");
+  holder.innerHTML = Array.from({length:8}, () => `
+    <article class="skeleton" aria-hidden="true">
+      <div class="media"></div>
+      <div class="inner">
+        <div class="line"></div>
+        <div class="line short"></div>
+        <div class="btn-sk"></div>
       </div>
     </article>
   `).join("");
+}
+
+function renderProducts(){
+  const container = document.getElementById("products");
+  renderProductSkeletons();
+
+  setTimeout(() => {
+    container.innerHTML = products.map(product => `
+      <article class="card">
+        <div class="card-media">
+          <img loading="lazy" src="${product.img}" alt="${product.name}">
+        </div>
+        <div class="card-body">
+          <h4>${product.name}</h4>
+          <div class="price">Rs. ${formatPrice(product.price)}</div>
+          <button class="btn" type="button" data-id="${product.id}" onclick="addToCart(${product.id}, this)">Add to Cart</button>
+        </div>
+      </article>
+    `).join("");
+
+    requestAnimationFrame(() => {
+      container.querySelectorAll('.card').forEach((card, idx) => {
+        setTimeout(() => card.classList.add('loaded'), 45 * idx);
+      });
+    });
+  }, 500);
 }
 
 /* ---------- Cart Logic ---------- */
@@ -858,16 +738,34 @@ function saveCart(){
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function addToCart(id){
-  const existing = cart.find(item => item.id === id);
-  if(existing){
-    existing.qty += 1;
-  } else {
-    const product = products.find(item => item.id === id);
-    cart.push({...product, qty:1});
+function addToCart(id, button){
+  if(button){
+    button.disabled = true;
+    button.textContent = "Adding...";
   }
-  updateCart();
-  toggleCart(true);
+
+  setTimeout(() => {
+    const existing = cart.find(item => item.id === id);
+    if(existing){
+      existing.qty += 1;
+    } else {
+      const product = products.find(item => item.id === id);
+      cart.push({...product, qty:1});
+    }
+
+    updateCart();
+    showToast("Added to cart");
+
+    if(button){
+      button.textContent = "Added ✓";
+      setTimeout(() => {
+        button.textContent = "Add to Cart";
+        button.disabled = false;
+      }, 900);
+    }
+
+    toggleCart(true);
+  }, 300);
 }
 
 function decreaseQty(id){
@@ -888,6 +786,11 @@ function increaseQty(id){
 }
 
 function removeItem(id){
+  const item = cart.find(product => product.id === id);
+  if(!item) return;
+  const shouldRemove = window.confirm(`Remove ${item.name} from cart?`);
+  if(!shouldRemove) return;
+
   cart = cart.filter(product => product.id !== id);
   updateCart();
 }
@@ -900,11 +803,17 @@ function updateCart(){
 
   const cartItems = document.getElementById("cart-items");
   if(cart.length === 0){
-    cartItems.innerHTML = '<p class="empty">Your cart is empty. Start shopping now ✨</p>';
+    cartItems.innerHTML = `
+      <div class="empty">
+        <span class="icon">🛒</span>
+        <strong>Your cart is empty</strong>
+        <p style="margin:6px 0 0">Start shopping now and add your first product ✨</p>
+      </div>
+    `;
   } else {
     cartItems.innerHTML = cart.map(item => `
       <article class="cart-item">
-        <img src="${item.img}" alt="${item.name}">
+        <img loading="lazy" src="${item.img}" alt="${item.name}">
         <div>
           <h5>${item.name}</h5>
           <div>Rs. ${formatPrice(item.price)}</div>
@@ -974,6 +883,19 @@ nextBtn.addEventListener("click", () => {
   startAutoPlay();
 });
 
+/* ---------- Scroll Reveal ---------- */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold: 0.15});
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ---------- Init ---------- */
 createDots();
 showSlide(0);
 startAutoPlay();
